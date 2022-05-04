@@ -1,7 +1,8 @@
 import pandas as pd
 import streamlit as st
 from random import choice
-import pyautogui
+from streamlit_autorefresh import st_autorefresh
+
 
 TILES = {'correct_place': '#228b22', 'correct_letter': '#FFD700',
          'incorrect': 'grey'}
@@ -62,7 +63,7 @@ def get_allowed_guesses(new_word=False, increment=False):
             st.session_state.allowed_guesses + 1
     elif new_word:
         st.session_state.allowed_guesses = \
-            ALLOWED_GUESSES + 1
+            ALLOWED_GUESSES + 2
     
 
     allowed_guesses = st.session_state.allowed_guesses
@@ -86,10 +87,11 @@ def wordle_game(target):
     new_word = col1.button('Generate a new word')
     if new_word:
         target_word = select_word(new_word=True)
-        allowed_guesses = get_allowed_guesses(True)
+        allowed_guesses = get_allowed_guesses(new_word=True)
         st.markdown('''<h4 style='text-align: center; color: #5F9EA0;'>🎲A new word has been generated</h4>''',
         unsafe_allow_html=True)
-        pyautogui.hotkey("ctrl","F5")
+        st_autorefresh(interval=0.01 * 60 * 1000, key="dataframerefresh")
+        
     hint = col2.button('Get a hint')
     if hint:
         letter = choice(target)
@@ -109,7 +111,7 @@ def wordle_game(target):
     if not GAME_ENDED:
         allowed_guesses = get_allowed_guesses()
         #st.write('guesses', allowed_guesses)
-        if allowed_guesses > 0:
+        if allowed_guesses > 0 and allowed_guesses < ALLOWED_GUESSES+1:
             st.markdown('''<h2 style='text-align: center; color: #0000b2;'>Now guess! You have {} tries</h2>'''.format(allowed_guesses),
                         unsafe_allow_html=True)
 
@@ -183,10 +185,6 @@ def wordle_game(target):
                         unsafe_allow_html=True)
 
         elif guess == target:
-            st.markdown("""<h2 style='text-align: center; color: #0000b2;'>\xf0\x9f\x8f\x86 You won! \xf0\x9f\x8f\x86 
-You nailed it in {}/{} tries
-</h2>""".format(len(st.session_state.history_guesses),
-                        ALLOWED_GUESSES), unsafe_allow_html=True)
+            st.markdown("""<h2 style='text-align: center; color: #0000b2;'>🏆 You won! 🏆""", unsafe_allow_html=True)
             st.markdown("<h3 style='text-align: center; color: #0000b2;'>You nailed it in {}/{} tries</h3>".format(len(st.session_state.history_guesses),
                         ALLOWED_GUESSES), unsafe_allow_html=True)
-
