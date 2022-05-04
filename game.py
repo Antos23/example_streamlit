@@ -179,12 +179,14 @@ def wordle_game(target):
             st.markdown("<h2 style='text-align: center; color: #0000b2;'>Play again!</h2>"
                         , unsafe_allow_html=True)
         elif guess != target:
+	    st.snow()
             st.markdown("<h2 style='text-align: center; color: #0000b2;'>Dang it! You ran out of tries</h2>"
                         , unsafe_allow_html=True)
             st.markdown("<h3 style='text-align: center; color: #0000b2;'>The correct word was {}</h3>".format(target),
                         unsafe_allow_html=True)
 
         elif guess == target:
+	    st.balloons()
             st.markdown("""<h2 style='text-align: center; color: #0000b2;'>🏆 You won! 🏆""", unsafe_allow_html=True)
             st.markdown("<h3 style='text-align: center; color: #0000b2;'>You nailed it in {}/{} tries</h3>".format(len(st.session_state.history_guesses),
                         ALLOWED_GUESSES), unsafe_allow_html=True)
