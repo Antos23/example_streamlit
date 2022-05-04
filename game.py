@@ -1,8 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import pandas as pd
 import streamlit as st
 from random import choice
 from streamlit_autorefresh import st_autorefresh
-
 
 TILES = {'correct_place': '#228b22', 'correct_letter': '#FFD700',
          'incorrect': 'grey'}
@@ -15,14 +16,15 @@ english_5chars_words = [i.upper() for i in common_words if len(i) == 5]
 
 
 def select_word(new_word=False):
-	if 'target_word' not in st.session_state or new_word:
-		target_word = choice(english_5chars_words).upper()
-		st.session_state.target_word = target_word
-	elif 'target_word' in st.session_state and not new_word:
-		target_word = st.session_state.target_word 	
-	
-	return target_word
-	
+    if 'target_word' not in st.session_state or new_word:
+        target_word = choice(english_5chars_words).upper()
+        st.session_state.target_word = target_word
+    elif 'target_word' in st.session_state and not new_word:
+        target_word = st.session_state.target_word
+
+    return target_word
+
+
 def validate_guess(guess, answer):
     guessed = []
     tile_pattern = []
@@ -55,16 +57,15 @@ def get_allowed_guesses(new_word=False, increment=False):
 
     if 'allowed_guesses' not in st.session_state:
         st.session_state.allowed_guesses = ALLOWED_GUESSES
-    elif 'allowed_guesses' in st.session_state and not new_word and not increment:
+    elif 'allowed_guesses' in st.session_state and not new_word \
+        and not increment:
         st.session_state.allowed_guesses = \
             st.session_state.allowed_guesses - 1
     elif increment:
         st.session_state.allowed_guesses = \
             st.session_state.allowed_guesses + 1
     elif new_word:
-        st.session_state.allowed_guesses = \
-            ALLOWED_GUESSES + 2
-    
+        st.session_state.allowed_guesses = ALLOWED_GUESSES + 2
 
     allowed_guesses = st.session_state.allowed_guesses
 
@@ -88,20 +89,21 @@ def wordle_game(target):
     if new_word:
         target_word = select_word(new_word=True)
         allowed_guesses = get_allowed_guesses(new_word=True)
-        st.markdown('''<h4 style='text-align: center; color: #5F9EA0;'>🎲A new word has been generated</h4>''',
-        unsafe_allow_html=True)
-        st_autorefresh(interval=0.01 * 60 * 1000, key="dataframerefresh")
-        
+        st.markdown("<h4 style='text-align: center; color: #5F9EA0;'>\xf0\x9f\x8e\xb2A new word has been generated</h4>"
+                    , unsafe_allow_html=True)
+        st_autorefresh(interval=0.01 * 60 * 1000, key='dataframerefresh'
+                       )
+
     hint = col2.button('Get a hint')
     if hint:
         letter = choice(target)
-        st.markdown('''<h4 style='text-align: center; color: #DB7093;'>🔎HINT: The word contains the letter {}</h4>'''.format(letter),
+        st.markdown("<h4 style='text-align: center; color: #DB7093;'>\xf0\x9f\x94\x8eHINT: The word contains the letter {}</h4>".format(letter),
                     unsafe_allow_html=True)
         allowed_guesses = get_allowed_guesses(increment=True)
     solution = col3.button('Find out the solution')
     if solution:
         letter = choice(target)
-        st.markdown('''<h4 style='text-align: center; color: ##4682B4;'>👉The secret word is {}</h4>'''.format(target),
+        st.markdown("<h4 style='text-align: center; color: ##4682B4;'>\xf0\x9f\x91\x89The secret word is {}</h4>".format(target),
                     unsafe_allow_html=True)
         guess = 'no try'
         GAME_ENDED = True
@@ -110,8 +112,11 @@ def wordle_game(target):
 
     if not GAME_ENDED:
         allowed_guesses = get_allowed_guesses()
-        #st.write('guesses', allowed_guesses)
-        if allowed_guesses > 0 and allowed_guesses < ALLOWED_GUESSES+1:
+
+        # st.write('guesses', allowed_guesses)
+
+        if allowed_guesses > 0 and allowed_guesses < ALLOWED_GUESSES \
+            + 1:
             st.markdown('''<h2 style='text-align: center; color: #0000b2;'>Now guess! You have {} tries</h2>'''.format(allowed_guesses),
                         unsafe_allow_html=True)
 
@@ -166,6 +171,7 @@ def wordle_game(target):
             for (g, p, col) in zip(guess, pattern, columns):
                 col.markdown('''<p style="background-color:{}; text-align: center">{}</p>'''.format(p,
                              g), unsafe_allow_html=True)
+
         # If the guess is the target or if the user ran out of tries, end the game
 
         if guess == target or len(st.session_state.history_guesses) \
@@ -179,14 +185,15 @@ def wordle_game(target):
             st.markdown("<h2 style='text-align: center; color: #0000b2;'>Play again!</h2>"
                         , unsafe_allow_html=True)
         elif guess != target:
-	    st.snow()
+            st.snow()
             st.markdown("<h2 style='text-align: center; color: #0000b2;'>Dang it! You ran out of tries</h2>"
                         , unsafe_allow_html=True)
             st.markdown("<h3 style='text-align: center; color: #0000b2;'>The correct word was {}</h3>".format(target),
                         unsafe_allow_html=True)
-
         elif guess == target:
-	    st.balloons()
-            st.markdown("""<h2 style='text-align: center; color: #0000b2;'>🏆 You won! 🏆""", unsafe_allow_html=True)
+
+            st.balloons()
+            st.markdown("<h2 style='text-align: center; color: #0000b2;'>\xf0\x9f\x8f\x86 You won! \xf0\x9f\x8f\x86"
+                        , unsafe_allow_html=True)
             st.markdown("<h3 style='text-align: center; color: #0000b2;'>You nailed it in {}/{} tries</h3>".format(len(st.session_state.history_guesses),
                         ALLOWED_GUESSES), unsafe_allow_html=True)
