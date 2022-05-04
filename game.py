@@ -89,7 +89,7 @@ def wordle_game(target):
     if new_word:
         target_word = select_word(new_word=True)
         allowed_guesses = get_allowed_guesses(new_word=True)
-        st.markdown("<h4 style='text-align: center; color: #5F9EA0;'>\xf0\x9f\x8e\xb2A new word has been generated</h4>"
+        st.markdown("<h4 style='text-align: center; color: #5F9EA0;'>A new word has been generated</h4>"
                     , unsafe_allow_html=True)
         st_autorefresh(interval=0.01 * 60 * 1000, key='dataframerefresh'
                        )
@@ -97,13 +97,13 @@ def wordle_game(target):
     hint = col2.button('Get a hint')
     if hint:
         letter = choice(target)
-        st.markdown("<h4 style='text-align: center; color: #DB7093;'>\xf0\x9f\x94\x8eHINT: The word contains the letter {}</h4>".format(letter),
+        st.markdown("<h4 style='text-align: center; color: #DB7093;'>HINT: The word contains the letter {}</h4>".format(letter),
                     unsafe_allow_html=True)
         allowed_guesses = get_allowed_guesses(increment=True)
     solution = col3.button('Find out the solution')
     if solution:
         letter = choice(target)
-        st.markdown("<h4 style='text-align: center; color: ##4682B4;'>\xf0\x9f\x91\x89The secret word is {}</h4>".format(target),
+        st.markdown("<h4 style='text-align: center; color: ##4682B4;'>The secret word is {}</h4>".format(target),
                     unsafe_allow_html=True)
         guess = 'no try'
         GAME_ENDED = True
@@ -193,7 +193,7 @@ def wordle_game(target):
         elif guess == target:
 
             st.balloons()
-            st.markdown("<h2 style='text-align: center; color: #0000b2;'>\xf0\x9f\x8f\x86 You won! \xf0\x9f\x8f\x86"
+            st.markdown("<h2 style='text-align: center; color: #0000b2;'>You won!"
                         , unsafe_allow_html=True)
             st.markdown("<h3 style='text-align: center; color: #0000b2;'>You nailed it in {}/{} tries</h3>".format(len(st.session_state.history_guesses),
                         ALLOWED_GUESSES), unsafe_allow_html=True)
